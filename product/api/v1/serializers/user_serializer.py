@@ -10,8 +10,10 @@ User = get_user_model()
 class CustomUserSerializer(UserSerializer):
     """Сериализатор пользователей."""
 
+
     class Meta:
         model = User
+        fields = ('__all__')
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
