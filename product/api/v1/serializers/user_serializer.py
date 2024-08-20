@@ -10,7 +10,6 @@ User = get_user_model()
 class CustomUserSerializer(UserSerializer):
     """Сериализатор пользователей."""
 
-
     class Meta:
         model = User
         fields = ('__all__')
@@ -19,10 +18,12 @@ class CustomUserSerializer(UserSerializer):
 class SubscriptionSerializer(serializers.ModelSerializer):
     """Сериализатор подписки."""
 
-    # TODO
+    Who_use = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Subscription
         fields = (
-            # TODO
+            'name_of_subscription',
+            'Flag_subscripton',
+            'Who_use'
         )

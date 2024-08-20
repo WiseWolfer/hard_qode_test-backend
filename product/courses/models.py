@@ -2,7 +2,12 @@ from django.db import models
 
 
 class Course(models.Model):
-    """Модель продукта - курса."""
+    """Модель продукта - курса.
+       Добавил уникальность названию курса и id записи
+       What_a_Course - внешний ключ с таблицей Subscriptions
+    """
+
+    id = models.AutoField(primary_key=True)
 
     author = models.CharField(
         max_length=250,
@@ -11,6 +16,7 @@ class Course(models.Model):
     title = models.CharField(
         max_length=250,
         verbose_name='Название',
+        unique=True
     )
     start_date = models.DateTimeField(
         auto_now=False,
@@ -21,9 +27,14 @@ class Course(models.Model):
         max_digits=10,
         decimal_places=2,
         verbose_name='Цена',
+        default=0
     )
+    courses_in_stock = models.IntegerField(verbose_name="Количество курсов в наличии")
 
-    # TODO
+    What_a_sub = models.ForeignKey('users.Subscription',
+                                   on_delete=models.CASCADE,
+                                   null=True,
+                                   verbose_name='Какая подписка')
 
     class Meta:
         verbose_name = 'Курс'
@@ -35,24 +46,28 @@ class Course(models.Model):
 
 
 class Lesson(models.Model):
-    """Модель урока."""
+    """Модель урока.
+       Добавил уникальность названию урока и id записи
+    """
+
+    id = models.AutoField(primary_key=True)
 
     course = models.ForeignKey(
         Course,
         on_delete=models.CASCADE,
         related_name='lessons',
         verbose_name='Курс',
+        null=True,
     )
     title = models.CharField(
         max_length=250,
         verbose_name='Название',
+        unique=True
     )
     link = models.URLField(
         max_length=250,
         verbose_name='Ссылка',
     )
-
-    # TODO
 
     class Meta:
         verbose_name = 'Урок'

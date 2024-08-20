@@ -2,7 +2,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
 from api.v1.permissions import IsStudentOrIsAdmin, ReadOnlyOrIsAdmin
 from api.v1.serializers.course_serializer import (CourseSerializer,
                                                   CreateCourseSerializer,
@@ -10,9 +9,9 @@ from api.v1.serializers.course_serializer import (CourseSerializer,
                                                   CreateLessonSerializer,
                                                   GroupSerializer,
                                                   LessonSerializer)
-from api.v1.serializers.user_serializer import SubscriptionSerializer
+
 from courses.models import Course
-from users.models import Subscription
+from users.models import Subscription, Balance, CustomUser
 
 
 class LessonViewSet(viewsets.ModelViewSet):
@@ -55,8 +54,9 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 class CourseViewSet(viewsets.ModelViewSet):
     """Курсы """
-
-    queryset = Course.objects.all()
+    # беру запросом те записи, где кол-во курса больше 0
+    # и флаг подписки установлен (пока устанавливается в админ панеле)
+    queryset = Course.objects.all().filter(courses_in_stock__gt=0).filter(What_a_sub__Flag_subscripton=True)
     permission_classes = (ReadOnlyOrIsAdmin,)
 
     def get_serializer_class(self):
@@ -71,9 +71,13 @@ class CourseViewSet(viewsets.ModelViewSet):
     )
     def pay(self, request, pk):
         """Покупка доступа к курсу (подписка на курс)."""
+        # получаю один баланс пользователя
 
-        # TODO
-
+        # query_set_balance = Balance.objects.filter(user__email=CustomUser.objects.get(id=pk).email)[0]
+        # query_set_balance.B_value = query_set_balance.B_value - 200
+        # query_set_balance.save(update_fields=["B_value"])
+        # Course.objects.filter(What_a_sub__)
+        # serializer = self.get_serializer(query_set_balance, many=True)
         return Response(
             data=data,
             status=status.HTTP_201_CREATED

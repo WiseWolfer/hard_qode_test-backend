@@ -3,7 +3,7 @@ from django.db.models import Avg, Count
 from rest_framework import serializers
 
 from courses.models import Course, Group, Lesson
-from users.models import Subscription
+
 
 User = get_user_model()
 
@@ -53,7 +53,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Group
-        fields = ('__all__') # Уточнить поля
+        fields = ('__all__')  # Уточнить поля
 
 
 class CreateGroupSerializer(serializers.ModelSerializer):
@@ -77,6 +77,7 @@ class MiniLessonSerializer(serializers.ModelSerializer):
         )
 
 
+
 class CourseSerializer(serializers.ModelSerializer):
     """Список курсов."""
 
@@ -88,10 +89,13 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_lessons_count(self, obj):
         """Количество уроков в курсе."""
+        return Lesson.objects.filter(course__title=obj).count()
+
         # TODO Доп. задание
 
     def get_students_count(self, obj):
         """Общее количество студентов на курсе."""
+        # return Course.objects.filter(What_a_sub__Who_use__email=obj.title).count()
         # TODO Доп. задание
 
     def get_groups_filled_percent(self, obj):
@@ -102,6 +106,7 @@ class CourseSerializer(serializers.ModelSerializer):
         """Процент приобретения курса."""
         # TODO Доп. задание
 
+
     class Meta:
         model = Course
         fields = (
@@ -110,6 +115,7 @@ class CourseSerializer(serializers.ModelSerializer):
             'title',
             'start_date',
             'price',
+            'courses_in_stock',
             'lessons_count',
             'lessons',
             'demand_course_percent',
@@ -123,4 +129,9 @@ class CreateCourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ('__all__') # Уточнить поля
+        fields = ('id',
+                  'author',
+                  'title',
+                  'start_date',
+                  'price',
+                  'courses_in_stock')  # Уточнить поля
